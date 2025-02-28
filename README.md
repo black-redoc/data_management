@@ -22,7 +22,7 @@ This is a web application that allows users to upload data files and visualize t
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/data-management-app.git
+git clone [https://github.com/your-username/data-management-app.git](https://github.com/black-redoc/data_management.git)
 ```
 
 2. Install the required dependencies:
