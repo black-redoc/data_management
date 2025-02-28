@@ -168,7 +168,7 @@ def health():
 
 @app.post("/api/v1/uploadfile/{file_type}", name="upload_file")
 def upload_file(file_type: str, file: UploadFile = File(...)):
-    schema, check_columns = schemas.get(file_type)
+    schema, check_columns = schemas.get(file_type, (None, None))
     if not schema:
         return JSONResponse(
             {
