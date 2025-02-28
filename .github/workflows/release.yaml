@@ -29,7 +29,5 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: latest
         run: |
-          ls -l
-          docker version
           docker build -t $ECR_REGISTRY/data_management:$IMAGE_TAG -f ./Dockerfile .
           docker push $ECR_REGISTRY/data_management$IMAGE_TAG
