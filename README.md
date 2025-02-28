@@ -43,7 +43,7 @@ uvicorn src.api:app --reload
 ```bash
 # dockerized
 docker build -t data-management-app .
-docker run -p 8080:8080 -e DB_URL=postgresql://<username>:<password>@<host>:<port>/<database> data-management-app
+docker run -p 8080:8080 -e DB_URL=postgresql://<username>:<password>@<host>:<port>/<database> -e CHUNK_SIZE=1000 data-management-app
 ```
 
 ## Usage
