@@ -86,7 +86,7 @@ curl -X GET \
 
 Or just visiting the index url you will be able to run the app with a ui.
 
-Go to this link to get a preview [datamanagement.josebasblack.dev](https://datamanagement.josebasblack.dev/)
+Go to this link to get a preview [datamanagement.josebasblack.dev](https://datamanagement.josebasblack.dev/), and download the file_tests.zip for testing purposes.
 
 ## Screenshots
 
