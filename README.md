@@ -82,6 +82,8 @@ curl -X GET \
 
 Or just visiting the index url you will be able to run the app with a ui.
 
+Go to this link to get a preview [datamanagement.josebasblack.dev](https://datamanagement.josebasblack.dev/)
+
 ## Screenshots
 
 <img src="assets/home.jpg" alt="Home" width="500"/>
