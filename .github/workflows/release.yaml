@@ -1,9 +1,8 @@
 name: Deploy to AWS ECR
 
 on:
-  push:
-    branches:
-      - main  # Trigger on pushes to main
+  pull_request:
+    branches: ["master"]
 
 jobs:
   deploy:
