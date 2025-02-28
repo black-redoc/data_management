@@ -11,6 +11,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from contextlib import asynccontextmanager
 import os
 import traceback as tb
+from mangum import Mangum
 
 
 # Load environment variables
@@ -142,6 +143,8 @@ schemas = {
 
 app = FastAPI(lifespan=lifespan)
 templates = Jinja2Templates(directory="templates")
+
+handler = Mangum(app)
 
 
 # ui routes
