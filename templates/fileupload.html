@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Show Data{% endblock %}
+
+{% block content %}
+<h1>Data Upload</h1>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Upload File</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="fileType" class="form-label">Select File Type</label>
+                            <select class="form-select" id="fileType" name="fileType" required>
+                                <option value="" selected disabled>Choose file type</option>
+                                <option value="hired_employees">Hired Employees</option>
+                                <option value="departments">Departments</option>
+                                <option value="jobs">Jobs</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fileInput" class="form-label">Choose File</label>
+                            <input class="form-control" type="file" id="fileInput" name="file" required>
+                            <div class="form-text">Supported formats: CSV, Excel files</div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">Upload File</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <p id="loading-msg" style="display:none;">Uploading file...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascript %}
+<script>
+  const form = document.querySelector("form")
+  const btn = document.querySelector("button[type='submit']")
+  const input = document.querySelector("input")
+  const select = document.querySelector("select")
+  const loading = document.querySelector("#loading-msg")
+  form.addEventListener("submit", function(event) {
+    event.preventDefault()
+    select.disabled = true
+    input.disabled = true
+    btn.disabled = true
+    loading.style.display = "block"
+    const fileType = document.querySelector("select#fileType").value
+    const fileInput = document.querySelector("input#fileInput")
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    fetch("/api/v1/uploadfile/" + fileType, {
+      method: "POST",
+      body: formData
+    })
+    .then(response => response.json())
+    .then(({status, message}) => {
+      console.log({status, message})
+      if (status === "success") {
+        alert("File uploaded successfully!")
+        select.disabled = false
+        input.disabled = false
+        btn.disabled = false
+        loading.style.display = "none"
+        input.value = ""
+        select.value = ""
+      } else {
+        select.disabled = false
+        input.disabled = false
+        btn.disabled = false
+        loading.style.display = "none"
+        alert("Error uploading file: " + message)
+      }
+    }).catch(error => console.error(error))
+  })
+</script>
+{% endblock %}

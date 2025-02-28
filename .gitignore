@@ -1,0 +1,8 @@
+.pytest_cache
+__pycache__
+.env
+*.db
+departments.csv
+jobs.csv
+hired_employees.csv
+Proposal for Challenge Globant DE.pdf

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Load Data{% endblock %}
+
+{% block content %}
+<h1>Data Visualization</h1>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Available Datasets
+            </div>
+            <div class="card-body">
+                <p>Select a dataset to visualize:</p>
+                <div class="list-group">
+                    <div class="dropdown">
+                        <button class="btn btn-dark" type="button"  data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseDepartments" data-bs-target="#collapseDepartments">
+                            Number of employees hired for each job and department in 2021 divided by quarter
+                        </button>
+                        <div class="collapse" id="collapseDepartments">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Deparment</th>
+                                        <th scope="col">Job</th>
+                                        <th scope="col">Q1</th>
+                                        <th scope="col">Q2</th>
+                                        <th scope="col">Q3</th>
+                                        <th scope="col">Q4</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-departments">
+                                    <p id="loading-message-departments">loading...</p>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="dropdown mt-2">
+                        <button class="btn btn-dark" type="button"  data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseListOfIds" data-bs-target="#collapseListOfIds">
+                            List of ids
+                        </button>
+                        <div class="collapse" id="collapseListOfIds">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Departemt</th>
+                                        <th scope="col">Hired</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-listOfIds">
+                                        <p id="loading-message-listOfIds">loading...</p>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4" id="data-container">
+    <!-- Data will be displayed here -->
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    let isNumEmployeesLoaded = false
+    let isListOfIdsLoaded = false
+    const listOfIdsBtn = document.querySelector("button[data-bs-target='#collapseListOfIds']")
+    const departmentsBtn = document.querySelector("button[data-bs-target='#collapseDepartments']")
+    const tbodyListOfIds = document.querySelector("tbody#tbody-listOfIds")
+    const tbodyDepartments = document.querySelector("tbody#tbody-departments")
+    const isLoadingListOfIds = document.querySelector("#loading-message-listOfIds")
+    const isLoadingDepartments = document.querySelector("#loading-message-departments")
+
+    listOfIdsBtn.addEventListener("click", function() {
+        if (isListOfIdsLoaded) {
+            return
+        }
+        fetch("/api/v1/listofids")
+        .then(response => response.json())
+        .then(({data}) => {
+            isListOfIdsLoaded = true
+            isLoadingListOfIds.style.display = "none"
+            const htmlRows = data.map(element => `<tr>
+            <td>${element.id}</td>
+            <td>${element.department}</td>
+            <td>${element.hired}</td>
+            </tr>`)
+            tbodyListOfIds.innerHTML = htmlRows.join("")
+        })
+    })
+
+    departmentsBtn.addEventListener("click", function() {
+        if (isNumEmployeesLoaded) {
+            return
+        }
+        fetch("/api/v1/getquarteremployees/2021")
+        .then(response => response.json())
+        .then(({data}) => {
+            isNumEmployeesLoaded = true
+            isLoadingDepartments.style.display = "none"
+            const htmlRows = data.map(element => `<tr>
+            <td>${element.department}</td>
+            <td>${element.job}</td>
+            <td>${element.Q1}</td>
+            <td>${element.Q2}</td>
+            <td>${element.Q3}</td>
+            <td>${element.Q4}</td>
+            </tr>`)
+            tbodyDepartments.innerHTML = htmlRows.join("")
+        })
+    })
+</script>
+{% endblock %}
