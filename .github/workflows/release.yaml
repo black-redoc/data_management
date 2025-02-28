@@ -30,4 +30,4 @@ jobs:
           IMAGE_TAG: latest
         run: |
           docker build -t $ECR_REGISTRY/data_management:$IMAGE_TAG -f ./Dockerfile .
-          docker push $ECR_REGISTRY/data_management$IMAGE_TAG
+          docker push $ECR_REGISTRY/data_management:$IMAGE_TAG
