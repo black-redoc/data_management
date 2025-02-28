@@ -3,6 +3,7 @@
 This is a web application that allows users to upload data files and visualize the data in a user-friendly way.
 
 ![Workflow Status](https://github.com/black0-redoc/data_management/actions/workflows/{workflow_file}.yml/badge.svg)
+![GitHub Actions Workflow Status](https://github.com/black-redoc/data_management/actions/workflows/WORKFLOW_FILE.yml/badge.svg)
 
 
 ## Features
