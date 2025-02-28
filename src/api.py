@@ -221,7 +221,7 @@ def get_quarter_employees(year: int):
     JOIN
         jobs j ON he.job_id = j.id
     WHERE
-        EXTRACT(YEAR FROM CAST(he.datetime AS TIMESTAMP)) = 2021
+        EXTRACT(YEAR FROM CAST(he.datetime AS TIMESTAMP)) = {year}
     GROUP BY
         d.department, j.job, EXTRACT(QUARTER FROM CAST(he.datetime AS TIMESTAMP))
     ORDER BY
