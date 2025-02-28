@@ -14,7 +14,7 @@ COPY src/api.py /app/api.py
 COPY templates /app/templates
 
 # Expose the port
-EXPOSE 80
+EXPOSE 8080
 
 ARG DB_URL
 ENV DB_URL=${DB_URL}
@@ -23,4 +23,4 @@ ARG CHUNK_SIZE
 ENV CHUNK_SIZE=${CHUNK_SIZE}
 
 # Run FastAPI with Uvicorn
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8080"]
