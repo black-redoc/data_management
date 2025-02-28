@@ -37,6 +37,8 @@ pip install -r requirements.txt
 
 ```bash
 # locally
+export DB_URL=postgresql://<username>:<password>@<host>:<port>/<database>
+export CHUNK_SIZE=1000
 uvicorn src.api:app --reload
 ```
 
