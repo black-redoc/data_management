@@ -32,5 +32,6 @@ jobs:
           ls -l
           echo $ECR_REGISTRY
           echo $IMAGE_TAG
+          docker version
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
