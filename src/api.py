@@ -52,16 +52,18 @@ async def lifespan(app: FastAPI):
 def check_job_columns(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     valid_df = df.copy()
     invalid_df = df.copy()
-    valid_df = valid_df[
-        (valid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    invalid_df = invalid_df[
-        ~(invalid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    valid_df = valid_df[valid_df.notnull()]
-    invalid_df = pd.concat(
-        [invalid_df, valid_df[valid_df.isnull()]],
+    valid_df = valid_df.notnull()
+    valid_df = valid_df.astype(
+        {
+            "id": "int16",
+            "job": "string",
+        },
     )
+    null_rows = valid_df.isnull()
+    if len(null_rows) > 0:
+        invalid_df = pd.concat(
+            [invalid_df, null_rows],
+        )
     return valid_df, invalid_df
 
 
@@ -70,52 +72,39 @@ def check_hired_employees_columns(
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     valid_df = df.copy()
     invalid_df = df.copy()
-    valid_df = valid_df[
-        (valid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    valid_df = valid_df[
-        (valid_df["job_id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    valid_df = valid_df[
-        (
-            valid_df["department_id"].apply(lambda x: pd.to_numeric(x, errors="coerce"))
-            > 0
-        )
-    ]
-    invalid_df = invalid_df[
-        ~(invalid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    invalid_df = invalid_df[
-        ~(invalid_df["job_id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    invalid_df = invalid_df[
-        ~(
-            invalid_df["department_id"].apply(
-                lambda x: pd.to_numeric(x, errors="coerce")
-            )
-            > 0
-        )
-    ]
-    valid_df = valid_df[valid_df.notnull()]
-    invalid_df = pd.concat(
-        [invalid_df, valid_df[valid_df.isnull()]],
+    valid_df = valid_df.notnull()
+    valid_df = valid_df.astype(
+        {
+            "id": "int16",
+            "job_id": "int16",
+            "datetime": "string",
+            "department_id": "int16",
+            "job_id": "int16",
+        },
     )
+    null_rows = valid_df.isnull()
+    if len(null_rows) > 0:
+        invalid_df = pd.concat(
+            [invalid_df, null_rows],
+        )
     return valid_df, invalid_df
 
 
 def check_departments_columns(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     valid_df = df.copy()
     invalid_df = df.copy()
-    valid_df = valid_df[
-        (valid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    invalid_df = invalid_df[
-        ~(invalid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    valid_df = valid_df[valid_df.notnull().all()]
-    invalid_df = pd.concat(
-        [invalid_df, valid_df[valid_df.isnull()]],
+    valid_df = valid_df.notnull()
+    valid_df = valid_df.astype(
+        {
+            "id": "int16",
+            "department": "string",
+        },
     )
+    null_rows = valid_df.isnull()
+    if len(null_rows) > 0:
+        invalid_df = pd.concat(
+            [invalid_df, null_rows],
+        )
     return valid_df, invalid_df
 
 
