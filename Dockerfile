@@ -12,6 +12,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy the source code
 COPY src/api.py /app/api.py
 COPY templates /app/templates
+COPY static /app/static
 
 # Expose the port
 EXPOSE 8080

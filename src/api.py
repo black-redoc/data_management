@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 import os
 import traceback as tb
 from mangum import Mangum
-
+from fastapi.staticfiles import StaticFiles
 
 # Load environment variables
 DB_URL = os.environ.get("DB_URL", "sqlite:///data.db")
@@ -52,16 +52,18 @@ async def lifespan(app: FastAPI):
 def check_job_columns(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     valid_df = df.copy()
     invalid_df = df.copy()
-    valid_df = valid_df[
-        (valid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    invalid_df = invalid_df[
-        ~(invalid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    valid_df = valid_df[valid_df.notnull()]
-    invalid_df = pd.concat(
-        [invalid_df, valid_df[valid_df.isnull()]],
+    valid_df = valid_df[(valid_df["id"].notnull()) & (valid_df["job"].notnull())]
+    valid_df = valid_df.astype(
+        {
+            "id": "int16",
+            "job": "string",
+        },
     )
+    null_rows = valid_df[(valid_df["id"].isnull()) & (valid_df["job"].isnull())]
+    if len(null_rows) > 0:
+        invalid_df = pd.concat(
+            [invalid_df, null_rows],
+        )
     return valid_df, invalid_df
 
 
@@ -71,51 +73,52 @@ def check_hired_employees_columns(
     valid_df = df.copy()
     invalid_df = df.copy()
     valid_df = valid_df[
-        (valid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
+        (valid_df["id"].notnull())
+        & (valid_df["name"].notnull())
+        & (valid_df["datetime"].notnull())
+        & (valid_df["department_id"].notnull())
+        & (valid_df["job_id"].notnull())
     ]
-    valid_df = valid_df[
-        (valid_df["job_id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    valid_df = valid_df[
-        (
-            valid_df["department_id"].apply(lambda x: pd.to_numeric(x, errors="coerce"))
-            > 0
-        )
-    ]
-    invalid_df = invalid_df[
-        ~(invalid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    invalid_df = invalid_df[
-        ~(invalid_df["job_id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    invalid_df = invalid_df[
-        ~(
-            invalid_df["department_id"].apply(
-                lambda x: pd.to_numeric(x, errors="coerce")
-            )
-            > 0
-        )
-    ]
-    valid_df = valid_df[valid_df.notnull()]
-    invalid_df = pd.concat(
-        [invalid_df, valid_df[valid_df.isnull()]],
+    valid_df = valid_df.astype(
+        {
+            "id": "int16",
+            "name": "string",
+            "datetime": "string",
+            "department_id": "int16",
+            "job_id": "int16",
+        },
+        errors="ignore",
+        copy=True,
     )
+    null_rows = valid_df = valid_df[
+        (valid_df["id"].isnull())
+        & (valid_df["name"].isnull())
+        & (valid_df["datetime"].isnull())
+        & (valid_df["department_id"].isnull())
+        & (valid_df["job_id"].isnull())
+    ]
+    if len(null_rows) > 0:
+        invalid_df = pd.concat(
+            [invalid_df, null_rows],
+        )
     return valid_df, invalid_df
 
 
 def check_departments_columns(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     valid_df = df.copy()
     invalid_df = df.copy()
-    valid_df = valid_df[
-        (valid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    invalid_df = invalid_df[
-        ~(invalid_df["id"].apply(lambda x: pd.to_numeric(x, errors="coerce")) > 0)
-    ]
-    valid_df = valid_df[valid_df.notnull().all()]
-    invalid_df = pd.concat(
-        [invalid_df, valid_df[valid_df.isnull()]],
+    valid_df = valid_df[(valid_df["id"].notnull()) & (valid_df["department"].notnull())]
+    valid_df = valid_df.astype(
+        {
+            "id": "int16",
+            "department": "string",
+        },
     )
+    null_rows = valid_df[(valid_df["id"].isnull()) & (valid_df["department"].isnull())]
+    if len(null_rows) > 0:
+        invalid_df = pd.concat(
+            [invalid_df, null_rows],
+        )
     return valid_df, invalid_df
 
 
@@ -143,7 +146,7 @@ schemas = {
 
 app = FastAPI(lifespan=lifespan)
 templates = Jinja2Templates(directory="templates")
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 handler = Mangum(app)
 
 
