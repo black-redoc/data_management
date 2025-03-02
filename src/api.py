@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 import os
 import traceback as tb
 from mangum import Mangum
-
+from fastapi.staticfiles import StaticFiles
 
 # Load environment variables
 DB_URL = os.environ.get("DB_URL", "sqlite:///data.db")
@@ -143,7 +143,7 @@ schemas = {
 
 app = FastAPI(lifespan=lifespan)
 templates = Jinja2Templates(directory="templates")
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 handler = Mangum(app)
 
 
