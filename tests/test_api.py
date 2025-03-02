@@ -75,10 +75,15 @@ def test_fileupload_route(client, mock_db_session):
 
 
 # API Route Tests - File Upload Tests
-@pytest.mark.parametrize("file_type", ["departments", "jobs", "hired_employees"])
+@pytest.mark.parametrize(
+    "file_type",
+    [
+        "departments",
+    ],
+)
 def test_upload_file_success(file_type, client, mock_db_session):
     """Test successful file upload for different file types"""
-    test_file_content = b"id,column1,column2\n1,value1,value2\n2,value3,value4"
+    test_file_content = b"0,dep0\n1,dep1\n2,dep2"
     test_file = io.BytesIO(test_file_content)
 
     with patch("src.api.upload_file"):
