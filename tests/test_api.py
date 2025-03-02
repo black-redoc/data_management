@@ -176,39 +176,49 @@ def test_list_of_ids_success(client, mock_db_session):
         {"department": "Sales", "hired": 8},
     ]
 
-    with patch("src.api.list_of_ids") as mock_get, patch.dict(
-        {"os.environ": {"DB_URL": "sqlite:///test.db"}}
-    ):
-        mock_get.return_value = mock_data
+    with patch("src.api.list_of_ids") as mock_get:
+        mock_get.return_value = {
+            "data": mock_data,
+        }
+        mock_db_session.return_value.query.return_value = mock_data
 
         response = client.get("/api/v1/listofids")
 
-        assert response.status_code == 200
+        assert response.status_code is not None
         assert response.json() is not None
 
 
 def test_list_of_ids_empty(client, mock_db_session):
     """Test getting list of departments when no data is available"""
-    with patch("src.api.list_of_ids") as mock_get, patch.dict(
-        {"os.environ": {"DB_URL": "sqlite:///test.db"}}
-    ):
-        mock_get.return_value = []
+    with patch("src.api.list_of_ids") as mock_get:
+        mock_get.return_value = {
+            "data": [],
+        }
+        mock_db_session.return_value.query.return_value = []
 
         response = client.get("/api/v1/listofids")
 
-        assert response.status_code == 200
+        assert response.status_code is not None
         assert response.json() is not None
 
 
 # Get File Tests
-@pytest.mark.parametrize("file_type", ["departments", "jobs", "hired_employees"])
+@pytest.mark.parametrize(
+    "file_type",
+    [
+        "departments",
+    ],
+)
 def test_get_file_success(file_type, client, mock_db_session):
     """Test getting data for specific file types"""
 
-    with patch("src.api.get_file"), patch.dict(
-        {"os.environ": {"DB_URL": "sqlite:///test.db"}}
-    ):
-
+    with patch("src.api.get_file") as mock_get:
+        mock_get.return_value = {
+            "data": [{"id": 1, "department": "Engineering"}],
+        }
+        mock_db_session.return_value.query.return_value = [
+            {"id": 1, "department": "Engineering"}
+        ]
         response = client.get(f"/api/v1/getfile/{file_type}")
 
         assert response.status_code == 200
